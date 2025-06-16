@@ -3,7 +3,8 @@ import ssl
 import hashlib
 import os
 from tkinter import *
-from tkinter import filedialog, messagebox, simpledialog
+from tkinter import filedialog, messagebox
+
 
 def sha256_hash(filepath):
     h = hashlib.sha256()
@@ -12,14 +13,15 @@ def sha256_hash(filepath):
             h.update(chunk)
     return h.hexdigest()
 
+
 def even_parity(byte_data):
     return sum(bin(b).count('1') for b in byte_data) % 2 == 0
+
 
 class SecureFTPClient:
     def __init__(self, root):
         self.root = root
         self.root.title("Secure FTP Client")
-
         self.conn = None
         self.setup_connection()
 
@@ -50,6 +52,8 @@ class SecureFTPClient:
             context.verify_mode = ssl.CERT_NONE
 
             raw_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            raw_sock.settimeout(5)  # Prevent hanging
+
             self.conn = context.wrap_socket(raw_sock, server_hostname=ip)
             self.conn.connect((ip, port))
 
@@ -149,6 +153,7 @@ class SecureFTPClient:
         except:
             pass
         self.root.destroy()
+
 
 if __name__ == "__main__":
     root = Tk()
